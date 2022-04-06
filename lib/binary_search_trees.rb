@@ -19,7 +19,8 @@ class Node
 end
 
 # Tree class models a rooted (unique attribute) binary search tree with initialization from a
-# sorted unique array. It also has insertion and delete methods.
+# sorted unique array. It has some CRUD methods, transverse methods, height/depth methods
+# and a rebalancing method.
 class Tree
   attr_reader :root
 
@@ -78,6 +79,89 @@ class Tree
     node.right_node = delete(node.value, node.right_node)
 
     node
+  end
+
+  def find(value, node = @root)
+    return nil if node.nil?
+
+    if value < node.value
+      find(value, node.left_node)
+    elsif value > node.value
+      find(value, node.right_node)
+    else
+      node
+    end
+  end
+
+  def level_order(node = @root, queue = [@root], index = 1, &block)
+    return queue.map(&:value) if node.nil?
+
+    yield(node) if block_given?
+
+    queue << node.left_node unless node.left_node.nil?
+    queue << node.right_node unless node.right_node.nil?
+
+    level_order(queue[index], queue, index + 1, &block)
+  end
+
+  def inorder(node = @root, array = [], &block)
+    inorder(node.left_node, array, &block) unless node.left_node.nil?
+
+    yield(node) if block_given?
+    array << node.value
+
+    inorder(node.right_node, array, &block) unless node.right_node.nil?
+
+    array
+  end
+
+  def preorder(node = @root, array = [], &block)
+    yield(node) if block_given?
+    array << node.value
+
+    preorder(node.left_node, array, &block) unless node.left_node.nil?
+    preorder(node.right_node, array, &block) unless node.right_node.nil?
+
+    array
+  end
+
+  def postorder(node = @root, array = [], &block)
+    postorder(node.left_node, array, &block) unless node.left_node.nil?
+    postorder(node.right_node, array, &block) unless node.right_node.nil?
+
+    yield(node) if block_given?
+    array << node.value
+
+    array
+  end
+
+  def height(node = @root)
+    return -1 if node.nil?
+
+    [height(node.left_node), height(node.right_node)].max + 1
+  end
+
+  def depth(target_node)
+    node = @root
+    depth = 0
+
+    while node != target_node && !node.nil?
+      target_node.value < node.value ? (node = node.left_node) : (node = node.right_node)
+      depth += 1
+    end
+
+    node.nil? ? nil : depth
+  end
+
+  def balanced?(node = @root)
+    return true if node.nil?
+
+    balanced?(node.left_node) && balanced?(node.right_node) &&
+      (height(node.left_node) - height(node.right_node)).abs <= 1
+  end
+
+  def rebalance
+    @root = build_tree(level_order)
   end
 
   # Printing method to visualize the tree (adapted to my code). Thanks fellow student!
