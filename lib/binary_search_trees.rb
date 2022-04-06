@@ -171,3 +171,47 @@ class Tree
     to_s(node.left_node, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left_node
   end
 end
+
+# Script
+
+# Create tree
+array = Array.new(15) { rand(1..100) }
+tree = Tree.new(array)
+
+# Check balanced
+print 'Is the tree balanced? '
+puts tree.balanced?
+
+# Print elements in level, in, pre, post order
+print 'Level order traversal '
+p tree.level_order
+print 'In order traversal '
+p tree.inorder
+print 'Pre order traversal '
+p tree.preorder
+print 'Post order traversal'
+p tree.postorder
+
+# Add elements to unbalance the tree
+15.times { tree.insert(rand(101..1000)) }
+
+# Check balanced
+print 'Is the tree balanced? '
+puts tree.balanced?
+
+# Rebalance the tree
+tree.rebalance
+
+# Check balanced
+print 'Is the tree balanced? '
+puts tree.balanced?
+
+# Print elements in level, in, pre, post order
+print 'Level order traversal '
+p tree.level_order
+print 'In order traversal '
+p tree.inorder
+print 'Pre order traversal '
+p tree.preorder
+print 'Post order traversal'
+p tree.postorder
